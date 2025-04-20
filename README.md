@@ -31,7 +31,12 @@ This repository contains a Docker-based MCP server that enables Claude Code to i
 3. Configure Claude Code to use the MCP server
 4. Authenticate with your YNAB account
 
-Detailed setup instructions are available in the [documentation](docs/SETUP.md).
+## Integration with Claude/Emma
+
+This MCP integrates seamlessly with Claude/Emma, allowing:
+- Viewing budgets and transactions
+- Getting financial insights
+- Managing your budget through natural conversation
 
 ## Security
 
@@ -40,11 +45,11 @@ Detailed setup instructions are available in the [documentation](docs/SETUP.md).
 - Authentication uses OAuth 2.0 standards
 - Support for read-only mode
 
-## Documentation
+## Implementation Details
 
-- [Setup Guide](docs/SETUP.md)
-- [API Reference](docs/API.md)
-- [Privacy Policy](https://mattweg.github.io/ynab-mcp/privacy-policy)
+For technical details about the implementation, see:
+- [CODE_CHANGES.md](./CODE_CHANGES.md) - Key implementation details
+- [TEST_SUMMARY.md](./TEST_SUMMARY.md) - Test results and coverage
 
 ## License
 
