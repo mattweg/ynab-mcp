@@ -146,6 +146,19 @@ Create a new transaction.
 
 **Response**: Created transaction object
 
+**Example Transaction Object**:
+```json
+{
+  "account_id": "account-id-here",
+  "date": "2025-04-20",
+  "amount": -15000,  // In milliunits: -$15.00
+  "payee_name": "Starbucks",
+  "category_id": "category-id-here",
+  "memo": "Coffee with colleague",
+  "cleared": "cleared"
+}
+```
+
 ### update_transaction
 Update an existing transaction.
 
@@ -156,6 +169,16 @@ Update an existing transaction.
 - `transaction`: Transaction object with properties to update
 
 **Response**: Updated transaction object
+
+### bulk_create_transactions
+Create multiple transactions at once.
+
+**Parameters**:
+- `email`: Account identifier
+- `budgetId`: ID of the budget
+- `transactions`: Array of transaction objects
+
+**Response**: Object with transaction IDs and any duplicates detected
 
 ## Payee Operations
 
@@ -178,24 +201,51 @@ Get details about a specific payee.
 
 **Response**: Payee details
 
-## Reporting Operations
-
-### get_spending_report
-Get a spending report by category.
+### get_payee_transactions
+Get transactions for a specific payee.
 
 **Parameters**:
 - `email`: Account identifier
 - `budgetId`: ID of the budget
-- `startDate`: Start date in ISO format
-- `endDate`: End date in ISO format
+- `payeeId`: ID of the payee
 
-**Response**: Spending report with categories and amounts
+**Response**: Array of transactions for the specified payee
 
-### get_budget_health
-Get overall budget health metrics.
+## Month Operations
+
+### list_months
+List all budget months with summary information.
 
 **Parameters**:
 - `email`: Account identifier
 - `budgetId`: ID of the budget
 
-**Response**: Budget health metrics including age of money, underfunded categories, etc.
+**Response**: Array of month objects with budget summary information
+
+### get_month
+Get detailed information about a specific budget month.
+
+**Parameters**:
+- `email`: Account identifier
+- `budgetId`: ID of the budget
+- `month`: Month in ISO format (e.g., "2025-04")
+
+**Response**: Month details including category budgets, income, and spending
+
+## Notes on Currency Values
+
+- All monetary values in the YNAB API are represented in "milliunits" (thousandths of the currency unit)
+- For example, $10.00 is represented as 10000
+- The API returns both raw values (`amount`) and formatted values (`amount_formatted`) for convenience
+- When updating or creating records, you can either:
+  - Provide amount values directly in milliunits
+  - Provide decimal values (e.g., 10.00), which will be converted to milliunits automatically
+
+## Authentication Flow
+
+1. Call `authenticate_ynab_account` with an email identifier
+2. Receive an authentication URL to open in a browser
+3. Complete OAuth authentication in the browser
+4. Retrieve the authorization code provided by YNAB
+5. Call `authenticate_ynab_account` again with the email and `auth_code`
+6. Authentication is complete, and you can now access YNAB data
