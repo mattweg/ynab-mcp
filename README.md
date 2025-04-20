@@ -47,9 +47,11 @@ This MCP integrates seamlessly with Claude/Emma, allowing:
 
 ## Implementation Details
 
-For technical details about the implementation, see:
-- [CODE_CHANGES.md](./CODE_CHANGES.md) - Key implementation details
-- [TEST_SUMMARY.md](./TEST_SUMMARY.md) - Test results and coverage
+The implementation follows the Model Context Protocol standard using:
+- Node.js and the official MCP SDK
+- Docker for containerization and deployment
+- YNAB JavaScript SDK for API operations
+- OAuth 2.0 for authentication
 
 ## License
 
