@@ -27,13 +27,14 @@
   },
   "homepage": "https://github.com/mattweg/ynab-mcp#readme",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.1",
     "axios": "^1.6.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "fs-extra": "^11.1.1",
-    "ynab": "^1.30.0",
-    "winston": "^3.11.0"
+    "winston": "^3.11.0",
+    "ynab": "^1.30.0"
   },
   "devDependencies": {
     "eslint": "^8.56.0",

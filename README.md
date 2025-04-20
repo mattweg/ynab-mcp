@@ -27,11 +27,42 @@ This repository contains a Docker-based MCP server that enables Claude Code to i
 ### Installation
 
 1. Clone this repository
-2. Build the Docker image
-3. Configure Claude Code to use the MCP server
-4. Authenticate with your YNAB account
+2. Copy `config/config.example.js` to `config/config.js` and add your YNAB API credentials
+3. Build the Docker image: `docker build -t ynab-mcp:latest .`
+4. Create a JSON configuration for Claude:
+   ```json
+   {
+     "command": "docker",
+     "args": [
+       "run",
+       "--rm",
+       "-i",
+       "-v",
+       "/path/to/data:/app/data",
+       "-v",
+       "/path/to/config:/app/config",
+       "-e",
+       "NODE_ENV=production",
+       "ynab-mcp:latest"
+     ]
+   }
+   ```
+5. Register the MCP with Claude Code CLI:
+   ```bash
+   claude mcp add-json ynab '{"command": "docker", "args": ["run", "--rm", "-i", "-v", "/path/to/data:/app/data", "-v", "/path/to/config:/app/config", "-e", "NODE_ENV=production", "ynab-mcp:latest"]}'
+   ```
+   You can also save the JSON to a file and use:
+   ```bash
+   claude mcp add-json ynab "$(cat config.json)"
+   ```
+6. Authenticate with your YNAB account when prompted by Claude
 
-Detailed setup instructions are available in the [documentation](docs/SETUP.md).
+## Integration with Claude
+
+This MCP integrates seamlessly with Claude, allowing:
+- Viewing budgets and transactions
+- Getting financial insights
+- Managing your budget through natural conversation
 
 ## Security
 
@@ -40,11 +71,13 @@ Detailed setup instructions are available in the [documentation](docs/SETUP.md).
 - Authentication uses OAuth 2.0 standards
 - Support for read-only mode
 
-## Documentation
+## Implementation Details
 
-- [Setup Guide](docs/SETUP.md)
-- [API Reference](docs/API.md)
-- [Privacy Policy](https://mattweg.github.io/ynab-mcp/privacy-policy)
+The implementation follows the Model Context Protocol standard using:
+- Node.js and the official MCP SDK
+- Docker for containerization and deployment
+- YNAB JavaScript SDK for API operations
+- OAuth 2.0 for authentication
 
 ## License
 

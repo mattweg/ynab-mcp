@@ -13,7 +13,9 @@ yarn-error.log
 
 # Config files with secrets
 config/*.json
+config/config.js
 !config/example.json
+!config/config.example.js
 
 # Runtime data
 data/

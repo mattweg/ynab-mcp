@@ -8,7 +8,7 @@ const { logger } = require('../utils/logger');
 const { shortenUrl } = require('../utils/urlShortener');
 const { tokenManager } = require('./tokenManager');
 const { AuthenticationError } = require('../utils/errorHandler');
-const config = require('../../config-example');
+const config = require('../../config/config');
 
 /**
  * Generate authorization URL for OAuth flow

@@ -9,16 +9,18 @@ RUN npm install
 # Copy application code
 COPY . .
 
-# Create config directory
+# Create config and data directories
 RUN mkdir -p /app/config
 RUN mkdir -p /app/data
 
+# No need for the sed commands anymore since we've updated the imports directly in the code
+
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=8080
+# No need for PORT since we're using stdin/stdout for MCP communications
 
-# Expose port for MCP communication
-EXPOSE 8080
+# Volume for persistent token storage
+VOLUME ["/app/data"]
 
-# Start application
+# Start application with StdioServerTransport
 CMD ["node", "src/server.js"]
