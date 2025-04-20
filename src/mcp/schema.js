@@ -372,6 +372,43 @@ const schema = {
           required: true
         }
       }
+    },
+    {
+      name: "list_months",
+      description: "List all budget months",
+      parameters: {
+        email: {
+          description: "Account identifier",
+          type: "string",
+          required: true
+        },
+        budgetId: {
+          description: "ID of the budget",
+          type: "string",
+          required: true
+        }
+      }
+    },
+    {
+      name: "get_month",
+      description: "Get details about a specific budget month",
+      parameters: {
+        email: {
+          description: "Account identifier",
+          type: "string",
+          required: true
+        },
+        budgetId: {
+          description: "ID of the budget",
+          type: "string",
+          required: true
+        },
+        month: {
+          description: "Month in ISO format (e.g., \"2025-04\")",
+          type: "string",
+          required: true
+        }
+      }
     }
   ]
 };

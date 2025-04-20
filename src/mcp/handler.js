@@ -11,6 +11,7 @@ const accountsApi = require('../api/accounts');
 const categoriesApi = require('../api/categories');
 const transactionsApi = require('../api/transactions');
 const payeesApi = require('../api/payees');
+const monthsApi = require('../api/months');
 
 // Map of supported MCP functions to their implementations
 const functionMap = {
@@ -45,9 +46,9 @@ const functionMap = {
   get_payee: payeesApi.getPayee,
   get_payee_transactions: payeesApi.getPayeeTransactions,
   
-  // Reporting operations (will be implemented later)
-  // get_spending_report: reportingApi.getSpendingReport,
-  // get_budget_health: reportingApi.getBudgetHealth,
+  // Month operations
+  list_months: monthsApi.listMonths,
+  get_month: monthsApi.getMonth,
 };
 
 /**
