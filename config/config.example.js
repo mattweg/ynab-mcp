@@ -2,8 +2,8 @@
 module.exports = {
   // YNAB OAuth credentials
   oauth: {
-    clientId: "qZBgoP92_BeEyHj0hsekr66-4zgcnz8Rww1w86QIEOY",
-    clientSecret: "xAVgg4QeYBk3SXwFePEMqyi3TpFiLTvcMuDq00mLfPA",
+    clientId: "YOUR_CLIENT_ID",
+    clientSecret: "YOUR_CLIENT_SECRET",
     redirectUri: "urn:ietf:wg:oauth:2.0:oob"
   },
   

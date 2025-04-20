@@ -27,9 +27,10 @@ This repository contains a Docker-based MCP server that enables Claude Code to i
 ### Installation
 
 1. Clone this repository
-2. Build the Docker image
-3. Configure Claude Code to use the MCP server
-4. Authenticate with your YNAB account
+2. Copy `config/config.example.js` to `config/config.js` and add your YNAB API credentials
+3. Build the Docker image: `docker build -t ynab-mcp:latest .`
+4. Configure Claude Code to use the MCP server
+5. Authenticate with your YNAB account
 
 ## Integration with Claude/Emma
 
