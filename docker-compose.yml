@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  ynab-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ynab-mcp
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+    environment:
+      - NODE_ENV=production
+    stdin_open: true  # Required for stdin communication
+    tty: true         # Allocate a pseudo-TTY
