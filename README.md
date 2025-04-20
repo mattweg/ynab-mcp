@@ -29,12 +29,33 @@ This repository contains a Docker-based MCP server that enables Claude Code to i
 1. Clone this repository
 2. Copy `config/config.example.js` to `config/config.js` and add your YNAB API credentials
 3. Build the Docker image: `docker build -t ynab-mcp:latest .`
-4. Configure Claude Code to use the MCP server
-5. Authenticate with your YNAB account
+4. Create a JSON configuration for Claude:
+   ```json
+   {
+     "command": "docker",
+     "args": [
+       "run",
+       "--rm",
+       "-i",
+       "-v",
+       "/path/to/data:/app/data",
+       "-v",
+       "/path/to/config:/app/config",
+       "-e",
+       "NODE_ENV=production",
+       "ynab-mcp:latest"
+     ]
+   }
+   ```
+5. Register the MCP with Claude Code CLI:
+   ```bash
+   echo '[your-json-config]' | claude mcp add-json ynab
+   ```
+6. Authenticate with your YNAB account when prompted by Claude
 
-## Integration with Claude/Emma
+## Integration with Claude
 
-This MCP integrates seamlessly with Claude/Emma, allowing:
+This MCP integrates seamlessly with Claude, allowing:
 - Viewing budgets and transactions
 - Getting financial insights
 - Managing your budget through natural conversation
