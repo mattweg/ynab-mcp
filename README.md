@@ -49,7 +49,11 @@ This repository contains a Docker-based MCP server that enables Claude Code to i
    ```
 5. Register the MCP with Claude Code CLI:
    ```bash
-   echo '[your-json-config]' | claude mcp add-json ynab
+   claude mcp add-json ynab '{"command": "docker", "args": ["run", "--rm", "-i", "-v", "/path/to/data:/app/data", "-v", "/path/to/config:/app/config", "-e", "NODE_ENV=production", "ynab-mcp:latest"]}'
+   ```
+   You can also save the JSON to a file and use:
+   ```bash
+   claude mcp add-json ynab "$(cat config.json)"
    ```
 6. Authenticate with your YNAB account when prompted by Claude
 
