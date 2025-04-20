@@ -1,0 +1,6 @@
+theme: jekyll-theme-minimal
+title: YNAB MCP
+description: YNAB Model Context Protocol (MCP) server for Claude Code integration
+logo: assets/logo.png
+show_downloads: true
+google_analytics:
