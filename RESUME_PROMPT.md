@@ -1,46 +1,48 @@
 # YNAB MCP Project Resumption Prompt
 
-Continue work on the YNAB MCP (Model Context Protocol) server integration. We've identified that we need to implement the official MCP SDK to properly communicate with Emma/Claude.
+Hi Emma,
+
+We're continuing our work on the YNAB MCP integration. We've made significant progress and are close to completion.
 
 ## Current Status
 
-1. We have a fully working YNAB API implementation:
-   - OAuth 2.0 authentication flow
-   - Budget, account, transaction operations
-   - Token storage and refresh
-   - All functional when tested directly
+1. We have successfully implemented the YNAB MCP server using the official SDK:
+   - Installed `@modelcontextprotocol/sdk` package
+   - Refactored server.js to use the SDK with StdioServerTransport
+   - Created tool definitions with proper schemas
+   - Built Docker container (ynab-mcp:latest)
 
-2. We've identified the communication issue:
-   - Our custom MCP implementation doesn't match what Emma/Claude expects
-   - We need to use the official `@modelcontextprotocol/sdk` package
-   - Specifically, we need to use the `StdioServerTransport` for communication
+2. We've configured Emma to work with our MCP server:
+   - Added direct Docker configuration via `emma mcp add-json`
+   - Successfully tested tool access
+   - Verified authentication flow initiation
+   - Confirmed OAuth URL generation works correctly
 
 ## Next Steps
 
-1. Install the MCP SDK:
-   ```bash
-   npm install @modelcontextprotocol/sdk
-   ```
+1. Complete end-to-end testing:
+   - Finish authentication flow with user-provided authorization code
+   - Test all YNAB API endpoints with authenticated account
+   - Verify budget and transaction data access
 
-2. Refactor server.js to use the SDK:
-   - Create a Server instance with metadata and capabilities
-   - Set up ListToolsRequestSchema handler to return our tool definitions
-   - Set up CallToolRequestSchema handler to map to our existing functions
-   - Connect the StdioServerTransport for stdin/stdout communication
+2. Finalize the implementation:
+   - Create pull request from feature branch
+   - Update technical design documentation in `/home/claude-user/mattweg/designs/ynab-mcp-integration/`
+   - Complete deployment to production
 
-3. Test with Emma/Claude to verify it works correctly
-
-4. Continue implementing the remaining project items:
-   - Testing framework
-   - Caching for performance
-   - Reporting features
-   - Custom views for Mel's finances
+3. Consider improvements:
+   - Add caching for better performance
+   - Implement reporting features
+   - Create custom views for specific use cases
 
 ## Available Resources
 
-- Examine `/home/claude-user/ynab-mcp/MCP_INTEGRATION_NOTES.md` for detailed analysis
-- Reference `/home/claude-user/google-workspace-mcp/src/tools/server.ts` for a working example of the MCP SDK implementation
-- Our existing implementation is in `/home/claude-user/ynab-mcp/src/server.js` and `/home/claude-user/ynab-mcp/src/mcp/handler.js`
-- YNAB authentication tokens are already set up for `mattweg@gmail.com`
+- Check `/home/claude-user/ynab-mcp/IMPLEMENTATION_SUMMARY.md` for latest progress
+- Review Docker configuration in `/home/claude-user/ynab-mcp/ynab-mcp-config.json`
+- Our MCP server implementation is in `/home/claude-user/ynab-mcp/src/server.js` 
+- YNAB OAuth credentials are in `/home/claude-user/ynab-mcp/config/config.js`
 
-Please help implement the MCP SDK integration for our YNAB server and ensure it works properly with Emma/Claude.
+Please help complete the remaining steps to finalize the YNAB MCP integration.
+
+Thanks,
+Matt

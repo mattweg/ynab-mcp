@@ -1,0 +1,15 @@
+{
+  "command": "docker",
+  "args": [
+    "run",
+    "--rm",
+    "-i",
+    "-v",
+    "/home/claude-user/.mcp/ynab-mcp:/app/data",
+    "-v",
+    "/home/claude-user/ynab-mcp/config:/app/config",
+    "-e",
+    "NODE_ENV=production",
+    "ynab-mcp:latest"
+  ]
+}
