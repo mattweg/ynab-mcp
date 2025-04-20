@@ -34,10 +34,28 @@ async function listPayees(params) {
     logger.info(`Listing payees for budget ${params.budgetId} for ${params.email}`);
     
     try {
-      // Implementation to be added
-      return { message: "Payee listing not yet implemented" };
+      const response = await ynabAPI.payees.getPayees(params.budgetId);
+      const payees = response.data.payees;
+      
+      // Format the response
+      return {
+        payees: payees
+          .filter(payee => !payee.deleted)
+          .map(payee => ({
+            id: payee.id,
+            name: payee.name,
+            transfer_account_id: payee.transfer_account_id,
+            deleted: payee.deleted
+          })),
+        server_knowledge: response.data.server_knowledge
+      };
     } catch (error) {
-      // Re-throw errors
+      // Check for 404 error
+      if (error.error && error.error.id === '404') {
+        throw new NotFoundError(`Budget with ID ${params.budgetId} not found`);
+      }
+      
+      // Re-throw other errors
       throw error;
     }
   });
@@ -72,10 +90,29 @@ async function getPayee(params) {
     logger.info(`Getting payee ${params.payeeId} for budget ${params.budgetId}`);
     
     try {
-      // Implementation to be added
-      return { message: "Payee retrieval not yet implemented" };
+      const response = await ynabAPI.payees.getPayeeById(
+        params.budgetId,
+        params.payeeId
+      );
+      
+      const payee = response.data.payee;
+      
+      // Return payee details
+      return {
+        id: payee.id,
+        name: payee.name,
+        transfer_account_id: payee.transfer_account_id,
+        deleted: payee.deleted
+      };
     } catch (error) {
-      // Re-throw errors
+      // Check for 404 error
+      if (error.error && error.error.id === '404') {
+        throw new NotFoundError(
+          `Payee with ID ${params.payeeId} not found in budget ${params.budgetId}`
+        );
+      }
+      
+      // Re-throw other errors
       throw error;
     }
   });
@@ -110,13 +147,69 @@ async function getPayeeTransactions(params) {
     logger.info(`Getting transactions for payee ${params.payeeId} in budget ${params.budgetId}`);
     
     try {
-      // Implementation to be added
-      return { message: "Payee transactions not yet implemented" };
+      // First, verify the payee exists
+      const payeeResponse = await ynabAPI.payees.getPayeeById(
+        params.budgetId,
+        params.payeeId
+      );
+      
+      const payee = payeeResponse.data.payee;
+      
+      // Then get transactions for this payee
+      const transactionsResponse = await ynabAPI.transactions.getTransactionsByPayee(
+        params.budgetId,
+        params.payeeId
+      );
+      
+      const transactions = transactionsResponse.data.transactions;
+      
+      // Format the transactions
+      return {
+        payee: {
+          id: payee.id,
+          name: payee.name,
+          transfer_account_id: payee.transfer_account_id
+        },
+        transactions: transactions.map(transaction => ({
+          id: transaction.id,
+          date: transaction.date,
+          amount: transaction.amount,
+          amount_formatted: formatCurrency(transaction.amount),
+          memo: transaction.memo,
+          cleared: transaction.cleared,
+          approved: transaction.approved,
+          account_id: transaction.account_id,
+          account_name: transaction.account_name,
+          category_id: transaction.category_id,
+          category_name: transaction.category_name
+        }))
+      };
     } catch (error) {
-      // Re-throw errors
+      // Check for 404 error
+      if (error.error && error.error.id === '404') {
+        throw new NotFoundError(
+          `Payee with ID ${params.payeeId} not found in budget ${params.budgetId}`
+        );
+      }
+      
+      // Re-throw other errors
       throw error;
     }
   });
+}
+
+/**
+ * Format currency amount (in milliunits) to a readable string
+ * @param {number} amountInMilliunits - Amount in milliunits
+ * @returns {string} Formatted currency string
+ */
+function formatCurrency(amountInMilliunits) {
+  const amount = amountInMilliunits / 1000;
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2
+  }).format(amount);
 }
 
 module.exports = {
