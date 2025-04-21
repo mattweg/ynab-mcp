@@ -2,9 +2,36 @@
 
 This document explains how to integrate the YNAB MCP server with Claude Code or Emma CLI.
 
-## Method 1: Using `mcp add-json` Command (Recommended)
+## Method 1: Direct Docker Container (Matt's Preference)
 
-The simplest way to add the YNAB MCP server to Claude or Emma is using the `mcp add-json` command:
+Matt prefers working directly with Docker containers over wrapper scripts. To start the YNAB MCP server:
+
+```bash
+# Stop any existing containers (if needed)
+docker stop ynab-mcp-container || true
+
+# Start a new container with correct volume mappings
+docker run -d --name ynab-mcp-container \
+  -v /home/claude-user/.mcp/ynab-mcp:/app/data \
+  -v /home/claude-user/ynab-mcp/config:/app/config \
+  -e NODE_ENV=production \
+  ynab-mcp:latest
+```
+
+### Key Configuration Requirements:
+
+1. **Config file**: Ensure `/home/claude-user/ynab-mcp/config/config.js` exists with:
+   - OAuth credentials (clientId and clientSecret)
+   - Token path pointing to `/app/config/tokens.json`
+   - Proper cache settings
+
+2. **Troubleshooting**:
+   - If experiencing "Connection closed" errors, check container logs with `docker logs ynab-mcp-container`
+   - Volume mappings are critical for both config and data directories
+
+## Method 2: Using `mcp add-json` Command
+
+Alternatively, the MCP server can be added using the `mcp add-json` command:
 
 ```bash
 emma mcp add-json ynab '{
@@ -15,11 +42,11 @@ emma mcp add-json ynab '{
     "-i",
     "-v", "/home/claude-user/.mcp/ynab-mcp:/app/config",
     "-v", "/home/claude-user/.mcp/ynab-mcp/data:/app/data",
-    "-e", "YNAB_CLIENT_ID=qZBgoP92_BeEyHj0hsekr66-4zgcnz8Rww1w86QIEOY",
-    "-e", "YNAB_CLIENT_SECRET=xAVgg4QeYBk3SXwFePEMqyi3TpFiLTvcMuDq00mLfPA",
+    "-e", "YNAB_CLIENT_ID=524cfd7c70904f208b9daed6ea8fcc56be3464fec12ec07c22350caa7b45c30b",
+    "-e", "YNAB_CLIENT_SECRET=c89ec70b63a16c8aeddbe1e582029b4ccb04cbc5a30da40da6d1acca19c9be1a",
     "-e", "YNAB_REDIRECT_URI=urn:ietf:wg:oauth:2.0:oob",
     "-e", "LOG_LEVEL=info",
-    "ynab-mcp-server:latest"
+    "ynab-mcp:latest"
   ]
 }'
 ```
