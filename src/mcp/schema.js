@@ -199,8 +199,8 @@ const schema = {
           type: "string",
           required: true
         },
-        since_date: {
-          description: "Only return transactions after this date",
+        sinceDate: {
+          description: "Only return transactions after this date (YYYY-MM-DD format)",
           type: "string",
           required: false
         },
