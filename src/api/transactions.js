@@ -37,14 +37,45 @@ async function listTransactions(params) {
       // Set up filter options
       const options = {};
       
-      // Add since_date filter if provided
-      if (params.since_date) {
-        options.since_date = params.since_date;
+      // Handle date parameter (support both since_date and sinceDate formats)
+      const sinceDate = params.since_date || params.sinceDate;
+      if (sinceDate) {
+        // The YNAB API expects the date in 'YYYY-MM-DD' format
+        try {
+          // If it's already a string matching YYYY-MM-DD format, use it directly
+          if (typeof sinceDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(sinceDate)) {
+            options.since_date = sinceDate;
+          } 
+          // Otherwise, try to convert to a Date and then format it
+          else {
+            const date = new Date(sinceDate);
+            if (isNaN(date.getTime())) {
+              throw new Error('Invalid date format');
+            }
+            // Format as YYYY-MM-DD
+            const year = date.getFullYear();
+            // Month is 0-indexed, so add 1 and pad with leading zero if needed
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            // Day of month, padded with leading zero if needed
+            const day = date.getDate().toString().padStart(2, '0');
+            options.since_date = `${year}-${month}-${day}`;
+          }
+          
+          logger.info(`Using since_date filter: ${options.since_date}`);
+        } catch (error) {
+          logger.error(`Invalid date format: ${sinceDate}`, error);
+          throw new ValidationError(`Invalid date format for since_date: ${sinceDate}. Use YYYY-MM-DD format.`);
+        }
       }
       
       // Add type filter if provided
       if (params.type) {
         options.type = params.type;
+      }
+      
+      // Add limit if provided (as last_knowledge_of_server parameter)
+      if (params.limit) {
+        options.limit = params.limit;
       }
       
       // Filter by account if provided
@@ -93,13 +124,28 @@ async function listTransactions(params) {
         return formatTransactionsResponse(response.data);
       }
     } catch (error) {
-      // Check for 404 error
-      if (error.error && error.error.id === '404') {
-        throw new NotFoundError(`Resource not found for the specified filter`);
+      logger.error(`Error listing transactions: ${error.message}`, error);
+      
+      // Check for specific error types
+      if (error.error) {
+        if (error.error.id === '404') {
+          throw new NotFoundError(`Resource not found for the specified filter`);
+        }
+        
+        if (error.error.id === '400') {
+          // Detailed information for bad request errors
+          const detailMessage = error.error.detail || error.message;
+          throw new ValidationError(`Invalid request: ${detailMessage}`);
+        }
       }
       
-      // Re-throw other errors
-      throw error;
+      // If this is already one of our custom errors, re-throw it
+      if (error instanceof ValidationError || error instanceof NotFoundError) {
+        throw error;
+      }
+      
+      // Otherwise, wrap in a more informative error message
+      throw new Error(`Failed to retrieve transactions: ${error.message}`);
     }
   });
 }
