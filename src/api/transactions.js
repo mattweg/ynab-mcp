@@ -34,48 +34,20 @@ async function listTransactions(params) {
     logger.info(`Listing transactions for budget ${params.budgetId} for ${params.email}`);
     
     try {
-      // Set up filter options
-      const options = {};
-      
-      // Handle date parameter (support both since_date and sinceDate formats)
+      // Get parameters
       const sinceDate = params.since_date || params.sinceDate;
+      const type = params.type;
+      const limit = params.limit || undefined;
+      
+      // Log for debugging
       if (sinceDate) {
-        // The YNAB API expects the date in 'YYYY-MM-DD' format
-        try {
-          // If it's already a string matching YYYY-MM-DD format, use it directly
-          if (typeof sinceDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(sinceDate)) {
-            options.since_date = sinceDate;
-          } 
-          // Otherwise, try to convert to a Date and then format it
-          else {
-            const date = new Date(sinceDate);
-            if (isNaN(date.getTime())) {
-              throw new Error('Invalid date format');
-            }
-            // Format as YYYY-MM-DD
-            const year = date.getFullYear();
-            // Month is 0-indexed, so add 1 and pad with leading zero if needed
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            // Day of month, padded with leading zero if needed
-            const day = date.getDate().toString().padStart(2, '0');
-            options.since_date = `${year}-${month}-${day}`;
-          }
-          
-          logger.info(`Using since_date filter: ${options.since_date}`);
-        } catch (error) {
-          logger.error(`Invalid date format: ${sinceDate}`, error);
-          throw new ValidationError(`Invalid date format for since_date: ${sinceDate}. Use YYYY-MM-DD format.`);
-        }
+        logger.info(`Using date filter: ${sinceDate}`);
       }
-      
-      // Add type filter if provided
-      if (params.type) {
-        options.type = params.type;
+      if (type) {
+        logger.info(`Using type filter: ${type}`);
       }
-      
-      // Add limit if provided (as last_knowledge_of_server parameter)
-      if (params.limit) {
-        options.limit = params.limit;
+      if (limit) {
+        logger.info(`Using limit: ${limit}`);
       }
       
       // Filter by account if provided
@@ -84,8 +56,14 @@ async function listTransactions(params) {
         const response = await ynabAPI.transactions.getTransactionsByAccount(
           params.budgetId,
           params.accountId,
-          options
+          sinceDate,
+          params.type
         );
+        
+        // Apply limit if needed
+        if (limit && response.data.transactions.length > limit) {
+          response.data.transactions = response.data.transactions.slice(0, limit);
+        }
         
         return formatTransactionsResponse(response.data);
       } 
@@ -96,8 +74,14 @@ async function listTransactions(params) {
         const response = await ynabAPI.transactions.getTransactionsByCategory(
           params.budgetId,
           params.categoryId,
-          options
+          sinceDate,
+          params.type
         );
+        
+        // Apply limit if needed
+        if (limit && response.data.transactions.length > limit) {
+          response.data.transactions = response.data.transactions.slice(0, limit);
+        }
         
         return formatTransactionsResponse(response.data);
       }
@@ -108,8 +92,14 @@ async function listTransactions(params) {
         const response = await ynabAPI.transactions.getTransactionsByPayee(
           params.budgetId,
           params.payeeId,
-          options
+          sinceDate,
+          params.type
         );
+        
+        // Apply limit if needed
+        if (limit && response.data.transactions.length > limit) {
+          response.data.transactions = response.data.transactions.slice(0, limit);
+        }
         
         return formatTransactionsResponse(response.data);
       }
@@ -118,8 +108,14 @@ async function listTransactions(params) {
       else {
         const response = await ynabAPI.transactions.getTransactions(
           params.budgetId, 
-          options
+          sinceDate,
+          params.type
         );
+        
+        // Apply limit if needed
+        if (limit && response.data.transactions.length > limit) {
+          response.data.transactions = response.data.transactions.slice(0, limit);
+        }
         
         return formatTransactionsResponse(response.data);
       }
