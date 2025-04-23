@@ -10,6 +10,7 @@ const CATEGORIES = {
   ACCOUNTS: 'Accounts',
   CATEGORIES: 'Categories',
   TRANSACTIONS: 'Transactions',
+  SCHEDULED_TRANSACTIONS: 'Scheduled Transactions',
   PAYEES: 'Payees',
   MONTHS: 'Months'
 };
@@ -743,6 +744,204 @@ const monthTools = [
   }
 ];
 
+// Scheduled Transaction tools
+const scheduledTransactionTools = [
+  {
+    name: 'list_scheduled_transactions',
+    category: CATEGORIES.SCHEDULED_TRANSACTIONS,
+    description: 'List all scheduled transactions for a budget',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: 'Email address of the authenticated YNAB account'
+        },
+        budgetId: {
+          type: 'string',
+          description: 'ID of the budget containing the scheduled transactions'
+        }
+      },
+      required: ['email', 'budgetId']
+    }
+  },
+  {
+    name: 'get_scheduled_transaction',
+    category: CATEGORIES.SCHEDULED_TRANSACTIONS,
+    description: 'Get details of a specific scheduled transaction',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: 'Email address of the authenticated YNAB account'
+        },
+        budgetId: {
+          type: 'string',
+          description: 'ID of the budget containing the scheduled transaction'
+        },
+        scheduledTransactionId: {
+          type: 'string',
+          description: 'ID of the scheduled transaction to retrieve'
+        }
+      },
+      required: ['email', 'budgetId', 'scheduledTransactionId']
+    }
+  },
+  {
+    name: 'create_scheduled_transaction',
+    category: CATEGORIES.SCHEDULED_TRANSACTIONS,
+    description: 'Create a new scheduled transaction in a budget',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: 'Email address of the authenticated YNAB account'
+        },
+        budgetId: {
+          type: 'string',
+          description: 'ID of the budget for the scheduled transaction'
+        },
+        scheduledTransaction: {
+          type: 'object',
+          properties: {
+            account_id: {
+              type: 'string',
+              description: 'ID of the account for the scheduled transaction'
+            },
+            date_first: {
+              type: 'string',
+              description: 'First date of the scheduled transaction in ISO format (YYYY-MM-DD)'
+            },
+            frequency: {
+              type: 'string',
+              enum: ['never', 'daily', 'weekly', 'everyOtherWeek', 'twiceAMonth', 'every4Weeks', 'monthly', 'everyOtherMonth', 'every3Months', 'every4Months', 'twiceAYear', 'yearly', 'everyOtherYear'],
+              description: 'How often the scheduled transaction repeats'
+            },
+            amount: {
+              type: 'number',
+              description: 'Transaction amount in milliunits (negative for outflow, positive for inflow)'
+            },
+            payee_id: {
+              type: 'string',
+              description: 'ID of the payee (optional)'
+            },
+            payee_name: {
+              type: 'string',
+              description: 'Name of the payee if payee_id not provided (optional)'
+            },
+            category_id: {
+              type: 'string',
+              description: 'ID of the category (optional)'
+            },
+            memo: {
+              type: 'string',
+              description: 'Memo/note for the scheduled transaction (optional)'
+            },
+            flag_color: {
+              type: 'string',
+              enum: ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
+              description: 'Flag color (optional)'
+            }
+          },
+          required: ['account_id', 'date_first', 'frequency', 'amount']
+        }
+      },
+      required: ['email', 'budgetId', 'scheduledTransaction']
+    }
+  },
+  {
+    name: 'update_scheduled_transaction',
+    category: CATEGORIES.SCHEDULED_TRANSACTIONS,
+    description: 'Update an existing scheduled transaction',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: 'Email address of the authenticated YNAB account'
+        },
+        budgetId: {
+          type: 'string',
+          description: 'ID of the budget containing the scheduled transaction'
+        },
+        scheduledTransactionId: {
+          type: 'string',
+          description: 'ID of the scheduled transaction to update'
+        },
+        scheduledTransaction: {
+          type: 'object',
+          properties: {
+            account_id: {
+              type: 'string',
+              description: 'ID of the account for the scheduled transaction (optional)'
+            },
+            date_first: {
+              type: 'string',
+              description: 'First date of the scheduled transaction in ISO format (YYYY-MM-DD) (optional)'
+            },
+            frequency: {
+              type: 'string',
+              enum: ['never', 'daily', 'weekly', 'everyOtherWeek', 'twiceAMonth', 'every4Weeks', 'monthly', 'everyOtherMonth', 'every3Months', 'every4Months', 'twiceAYear', 'yearly', 'everyOtherYear'],
+              description: 'How often the scheduled transaction repeats (optional)'
+            },
+            amount: {
+              type: 'number',
+              description: 'Transaction amount in milliunits (negative for outflow, positive for inflow) (optional)'
+            },
+            payee_id: {
+              type: 'string',
+              description: 'ID of the payee (optional)'
+            },
+            payee_name: {
+              type: 'string',
+              description: 'Name of the payee if payee_id not provided (optional)'
+            },
+            category_id: {
+              type: 'string',
+              description: 'ID of the category (optional)'
+            },
+            memo: {
+              type: 'string',
+              description: 'Memo/note for the scheduled transaction (optional)'
+            },
+            flag_color: {
+              type: 'string',
+              enum: ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
+              description: 'Flag color (optional)'
+            }
+          }
+        }
+      },
+      required: ['email', 'budgetId', 'scheduledTransactionId', 'scheduledTransaction']
+    }
+  },
+  {
+    name: 'delete_scheduled_transaction',
+    category: CATEGORIES.SCHEDULED_TRANSACTIONS,
+    description: 'Delete a scheduled transaction',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: 'Email address of the authenticated YNAB account'
+        },
+        budgetId: {
+          type: 'string',
+          description: 'ID of the budget containing the scheduled transaction'
+        },
+        scheduledTransactionId: {
+          type: 'string',
+          description: 'ID of the scheduled transaction to delete'
+        }
+      },
+      required: ['email', 'budgetId', 'scheduledTransactionId']
+    }
+  }
+];
+
 // Combine all tools
 const ynabTools = [
   ...authTools,
@@ -750,6 +949,7 @@ const ynabTools = [
   ...accountTools,
   ...categoryTools,
   ...transactionTools,
+  ...scheduledTransactionTools,
   ...payeeTools,
   ...monthTools
 ];

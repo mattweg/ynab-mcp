@@ -12,6 +12,7 @@ const categoriesApi = require('../api/categories');
 const transactionsApi = require('../api/transactions');
 const payeesApi = require('../api/payees');
 const monthsApi = require('../api/months');
+const scheduledTransactionsApi = require('../api/scheduledTransactions');
 
 // Map of supported MCP functions to their implementations
 const functionMap = {
@@ -42,6 +43,13 @@ const functionMap = {
   create_transaction: transactionsApi.createTransaction,
   update_transaction: transactionsApi.updateTransaction,
   bulk_create_transactions: transactionsApi.bulkCreateTransactions,
+  
+  // Scheduled Transaction operations
+  list_scheduled_transactions: scheduledTransactionsApi.listScheduledTransactions,
+  get_scheduled_transaction: scheduledTransactionsApi.getScheduledTransaction,
+  create_scheduled_transaction: scheduledTransactionsApi.createScheduledTransaction,
+  update_scheduled_transaction: scheduledTransactionsApi.updateScheduledTransaction,
+  delete_scheduled_transaction: scheduledTransactionsApi.deleteScheduledTransaction,
   
   // Payee operations
   list_payees: payeesApi.listPayees,
