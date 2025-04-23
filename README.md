@@ -24,9 +24,19 @@ We're actively working on the following fixes:
 - OAuth-based authentication with YNAB API
 - Complete budget and account management
 - Transaction creation and categorization
+- Advanced category management with bulk allocation and recommendations
 - Support for multiple budgets (personal and family)
 - Rate limit handling (YNAB API limit: 200 requests/hour)
 - Caching for improved performance
+
+### New Category Management Features
+
+This MCP includes advanced category management capabilities:
+
+- **Assign to Categories**: Allocate funds from Ready to Assign to multiple categories in one operation
+- **Recommended Allocations**: Get AI-powered suggestions for budget distribution based on goals and spending patterns
+
+See [Category Management Documentation](docs/category-management.md) for details.
 
 ## Getting Started
 
