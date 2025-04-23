@@ -33,6 +33,8 @@ const functionMap = {
   list_categories: categoriesApi.listCategories,
   get_category: categoriesApi.getCategory,
   update_category: categoriesApi.updateCategory,
+  assign_to_categories: categoriesApi.assignToCategories,
+  get_recommended_allocations: categoriesApi.getRecommendedAllocations,
   
   // Transaction operations
   list_transactions: transactionsApi.listTransactions,
