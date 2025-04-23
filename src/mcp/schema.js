@@ -475,6 +475,111 @@ const schema = {
           required: true
         }
       }
+    },
+    {
+      name: "list_scheduled_transactions",
+      description: "List all scheduled transactions for a budget",
+      parameters: {
+        email: {
+          description: "Account identifier",
+          type: "string",
+          required: true
+        },
+        budgetId: {
+          description: "ID of the budget",
+          type: "string",
+          required: true
+        }
+      }
+    },
+    {
+      name: "get_scheduled_transaction",
+      description: "Get a specific scheduled transaction",
+      parameters: {
+        email: {
+          description: "Account identifier",
+          type: "string",
+          required: true
+        },
+        budgetId: {
+          description: "ID of the budget",
+          type: "string",
+          required: true
+        },
+        scheduledTransactionId: {
+          description: "ID of the scheduled transaction",
+          type: "string",
+          required: true
+        }
+      }
+    },
+    {
+      name: "create_scheduled_transaction",
+      description: "Create a new scheduled transaction",
+      parameters: {
+        email: {
+          description: "Account identifier",
+          type: "string",
+          required: true
+        },
+        budgetId: {
+          description: "ID of the budget",
+          type: "string",
+          required: true
+        },
+        scheduledTransaction: {
+          description: "Scheduled transaction object with date_first, frequency, amount, etc.",
+          type: "object",
+          required: true
+        }
+      }
+    },
+    {
+      name: "update_scheduled_transaction",
+      description: "Update an existing scheduled transaction",
+      parameters: {
+        email: {
+          description: "Account identifier",
+          type: "string",
+          required: true
+        },
+        budgetId: {
+          description: "ID of the budget",
+          type: "string",
+          required: true
+        },
+        scheduledTransactionId: {
+          description: "ID of the scheduled transaction",
+          type: "string",
+          required: true
+        },
+        scheduledTransaction: {
+          description: "Scheduled transaction object with properties to update",
+          type: "object",
+          required: true
+        }
+      }
+    },
+    {
+      name: "delete_scheduled_transaction",
+      description: "Delete a scheduled transaction",
+      parameters: {
+        email: {
+          description: "Account identifier",
+          type: "string",
+          required: true
+        },
+        budgetId: {
+          description: "ID of the budget",
+          type: "string",
+          required: true
+        },
+        scheduledTransactionId: {
+          description: "ID of the scheduled transaction to delete",
+          type: "string",
+          required: true
+        }
+      }
     }
   ]
 };

@@ -22,159 +22,10 @@ const categoriesApi = require('./api/categories');
 const transactionsApi = require('./api/transactions');
 const payeesApi = require('./api/payees');
 const monthsApi = require('./api/months');
+const scheduledTransactionsApi = require('./api/scheduledTransactions');
 
-// Define all available tools
-const ynabTools = [
-  // Authentication tools
-  {
-    name: "list_ynab_accounts",
-    description: "List all authenticated YNAB accounts",
-    inputSchema: {
-      type: "object",
-      properties: {}
-    }
-  },
-  {
-    name: "authenticate_ynab_account",
-    description: "Authenticate a YNAB account",
-    inputSchema: {
-      type: "object",
-      properties: {
-        email: {
-          type: "string",
-          description: "Email address for the YNAB account (used as account identifier)"
-        },
-        auth_code: {
-          type: "string",
-          description: "Authorization code from YNAB OAuth (for completing authentication)"
-        }
-      },
-      required: ["email"]
-    }
-  },
-  {
-    name: "remove_ynab_account",
-    description: "Remove a YNAB account and delete its tokens",
-    inputSchema: {
-      type: "object",
-      properties: {
-        email: {
-          type: "string",
-          description: "Email address of the YNAB account to remove"
-        }
-      },
-      required: ["email"]
-    }
-  },
-  
-  // Budget tools
-  {
-    name: "list_budgets",
-    description: "List all budgets for the authenticated YNAB account",
-    inputSchema: {
-      type: "object",
-      properties: {
-        email: {
-          type: "string",
-          description: "Email address of the authenticated YNAB account"
-        }
-      },
-      required: ["email"]
-    }
-  },
-  {
-    name: "get_budget",
-    description: "Get details of a specific budget",
-    inputSchema: {
-      type: "object",
-      properties: {
-        email: {
-          type: "string",
-          description: "Email address of the authenticated YNAB account"
-        },
-        budgetId: {
-          type: "string",
-          description: "ID of the budget to retrieve"
-        }
-      },
-      required: ["email", "budgetId"]
-    }
-  },
-  
-  // Account tools
-  {
-    name: "list_accounts",
-    description: "List all accounts in a specific budget",
-    inputSchema: {
-      type: "object",
-      properties: {
-        email: {
-          type: "string",
-          description: "Email address of the authenticated YNAB account"
-        },
-        budgetId: {
-          type: "string",
-          description: "ID of the budget containing the accounts"
-        }
-      },
-      required: ["email", "budgetId"]
-    }
-  },
-  {
-    name: "get_account",
-    description: "Get details of a specific account in a budget",
-    inputSchema: {
-      type: "object",
-      properties: {
-        email: {
-          type: "string",
-          description: "Email address of the authenticated YNAB account"
-        },
-        budgetId: {
-          type: "string",
-          description: "ID of the budget containing the account"
-        },
-        accountId: {
-          type: "string",
-          description: "ID of the account to retrieve"
-        }
-      },
-      required: ["email", "budgetId", "accountId"]
-    }
-  },
-  
-  // Transaction tools
-  {
-    name: "list_transactions",
-    description: "List transactions with optional filtering by account, date, etc.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        email: {
-          type: "string",
-          description: "Email address of the authenticated YNAB account"
-        },
-        budgetId: {
-          type: "string", 
-          description: "ID of the budget containing the transactions"
-        },
-        accountId: {
-          type: "string",
-          description: "Filter transactions by account ID (optional)"
-        },
-        sinceDate: {
-          type: "string",
-          description: "Filter transactions since this date (YYYY-MM-DD format, optional)"
-        },
-        limit: {
-          type: "number",
-          description: "Maximum number of transactions to return (optional)"
-        }
-      },
-      required: ["email", "budgetId"]
-    }
-  }
-];
+// Import tools from toolDefinitions to ensure consistency
+const { ynabTools } = require('./mcp/toolDefinitions');
 
 // Handle authentication (both start and complete)
 async function handleAuthentication(params) {
@@ -264,9 +115,74 @@ class YnabServer {
             result = await accountsApi.getAccount(args);
             break;
             
+          // Category APIs
+          case 'list_categories':
+            result = await categoriesApi.listCategories(args);
+            break;
+          case 'get_category':
+            result = await categoriesApi.getCategory(args);
+            break;
+          case 'update_category':
+            result = await categoriesApi.updateCategory(args);
+            break;
+          case 'assign_to_categories':
+            result = await categoriesApi.assignToCategories(args);
+            break;
+          case 'get_recommended_allocations':
+            result = await categoriesApi.getRecommendedAllocations(args);
+            break;
+            
           // Transaction APIs
           case 'list_transactions':
             result = await transactionsApi.listTransactions(args);
+            break;
+          case 'get_transaction':
+            result = await transactionsApi.getTransaction(args);
+            break;
+          case 'create_transaction':
+            result = await transactionsApi.createTransaction(args);
+            break;
+          case 'update_transaction':
+            result = await transactionsApi.updateTransaction(args);
+            break;
+          case 'bulk_create_transactions':
+            result = await transactionsApi.bulkCreateTransactions(args);
+            break;
+            
+          // Scheduled Transaction APIs
+          case 'list_scheduled_transactions':
+            result = await scheduledTransactionsApi.listScheduledTransactions(args);
+            break;
+          case 'get_scheduled_transaction':
+            result = await scheduledTransactionsApi.getScheduledTransaction(args);
+            break;
+          case 'create_scheduled_transaction':
+            result = await scheduledTransactionsApi.createScheduledTransaction(args);
+            break;
+          case 'update_scheduled_transaction':
+            result = await scheduledTransactionsApi.updateScheduledTransaction(args);
+            break;
+          case 'delete_scheduled_transaction':
+            result = await scheduledTransactionsApi.deleteScheduledTransaction(args);
+            break;
+            
+          // Payee APIs
+          case 'list_payees':
+            result = await payeesApi.listPayees(args);
+            break;
+          case 'get_payee':
+            result = await payeesApi.getPayee(args);
+            break;
+          case 'get_payee_transactions':
+            result = await payeesApi.getPayeeTransactions(args);
+            break;
+            
+          // Month APIs
+          case 'list_months':
+            result = await monthsApi.listMonths(args);
+            break;
+          case 'get_month':
+            result = await monthsApi.getMonth(args);
             break;
             
           default:
