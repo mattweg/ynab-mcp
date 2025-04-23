@@ -186,6 +186,72 @@ const schema = {
       }
     },
     {
+      name: "assign_to_categories",
+      description: "Assign budget from Ready to Assign to multiple categories",
+      parameters: {
+        email: {
+          description: "Account identifier",
+          type: "string",
+          required: true
+        },
+        budgetId: {
+          description: "ID of the budget",
+          type: "string",
+          required: true
+        },
+        month: {
+          description: "Month in ISO format (e.g., \"2025-04\")",
+          type: "string",
+          required: true
+        },
+        categoryAllocations: {
+          description: "Array of category allocations with categoryId and amount",
+          type: "array",
+          required: true,
+          items: {
+            type: "object",
+            properties: {
+              categoryId: {
+                type: "string",
+                description: "ID of the category to allocate funds to"
+              },
+              amount: {
+                type: "number",
+                description: "Amount to allocate (in dollars or milliunits)"
+              }
+            },
+            required: ["categoryId", "amount"]
+          }
+        }
+      }
+    },
+    {
+      name: "get_recommended_allocations",
+      description: "Get recommended category allocations based on goals and spending patterns",
+      parameters: {
+        email: {
+          description: "Account identifier",
+          type: "string",
+          required: true
+        },
+        budgetId: {
+          description: "ID of the budget",
+          type: "string",
+          required: true
+        },
+        month: {
+          description: "Month in ISO format (e.g., \"2025-04\")",
+          type: "string",
+          required: true
+        },
+        availableAmount: {
+          description: "Optional override for available amount to allocate (in milliunits)",
+          type: "number",
+          required: false
+        }
+      }
+    },
+    {
       name: "list_transactions",
       description: "List transactions with optional filtering",
       parameters: {
