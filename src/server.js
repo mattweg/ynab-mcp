@@ -99,8 +99,81 @@ const ynabTools = [
       },
       required: ["email", "budgetId"]
     }
+  },
+  
+  // Account tools
+  {
+    name: "list_accounts",
+    description: "List all accounts in a specific budget",
+    inputSchema: {
+      type: "object",
+      properties: {
+        email: {
+          type: "string",
+          description: "Email address of the authenticated YNAB account"
+        },
+        budgetId: {
+          type: "string",
+          description: "ID of the budget containing the accounts"
+        }
+      },
+      required: ["email", "budgetId"]
+    }
+  },
+  {
+    name: "get_account",
+    description: "Get details of a specific account in a budget",
+    inputSchema: {
+      type: "object",
+      properties: {
+        email: {
+          type: "string",
+          description: "Email address of the authenticated YNAB account"
+        },
+        budgetId: {
+          type: "string",
+          description: "ID of the budget containing the account"
+        },
+        accountId: {
+          type: "string",
+          description: "ID of the account to retrieve"
+        }
+      },
+      required: ["email", "budgetId", "accountId"]
+    }
+  },
+  
+  // Transaction tools
+  {
+    name: "list_transactions",
+    description: "List transactions with optional filtering by account, date, etc.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        email: {
+          type: "string",
+          description: "Email address of the authenticated YNAB account"
+        },
+        budgetId: {
+          type: "string", 
+          description: "ID of the budget containing the transactions"
+        },
+        accountId: {
+          type: "string",
+          description: "Filter transactions by account ID (optional)"
+        },
+        sinceDate: {
+          type: "string",
+          description: "Filter transactions since this date (YYYY-MM-DD format, optional)"
+        },
+        limit: {
+          type: "number",
+          description: "Maximum number of transactions to return (optional)"
+        }
+      },
+      required: ["email", "budgetId"]
+    }
   }
-  // Add more tools as needed but keeping minimal for now
 ];
 
 // Handle authentication (both start and complete)
@@ -174,12 +247,28 @@ class YnabServer {
           case 'remove_ynab_account':
             result = await removeAuthentication(args.email);
             break;
+            
+          // Budget APIs
           case 'list_budgets':
             result = await budgetsApi.listBudgets(args);
             break;
           case 'get_budget':
             result = await budgetsApi.getBudget(args);
             break;
+            
+          // Account APIs
+          case 'list_accounts':
+            result = await accountsApi.listAccounts(args);
+            break;
+          case 'get_account':
+            result = await accountsApi.getAccount(args);
+            break;
+            
+          // Transaction APIs
+          case 'list_transactions':
+            result = await transactionsApi.listTransactions(args);
+            break;
+            
           default:
             throw new ValidationError(`Unknown tool: ${toolName}`);
         }

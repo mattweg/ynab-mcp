@@ -34,17 +34,20 @@ async function listTransactions(params) {
     logger.info(`Listing transactions for budget ${params.budgetId} for ${params.email}`);
     
     try {
-      // Set up filter options
-      const options = {};
+      // Get parameters
+      const sinceDate = params.since_date || params.sinceDate;
+      const type = params.type;
+      const limit = params.limit || undefined;
       
-      // Add since_date filter if provided
-      if (params.since_date) {
-        options.since_date = params.since_date;
+      // Log for debugging
+      if (sinceDate) {
+        logger.info(`Using date filter: ${sinceDate}`);
       }
-      
-      // Add type filter if provided
-      if (params.type) {
-        options.type = params.type;
+      if (type) {
+        logger.info(`Using type filter: ${type}`);
+      }
+      if (limit) {
+        logger.info(`Using limit: ${limit}`);
       }
       
       // Filter by account if provided
@@ -53,8 +56,14 @@ async function listTransactions(params) {
         const response = await ynabAPI.transactions.getTransactionsByAccount(
           params.budgetId,
           params.accountId,
-          options
+          sinceDate,
+          params.type
         );
+        
+        // Apply limit if needed
+        if (limit && response.data.transactions.length > limit) {
+          response.data.transactions = response.data.transactions.slice(0, limit);
+        }
         
         return formatTransactionsResponse(response.data);
       } 
@@ -65,8 +74,14 @@ async function listTransactions(params) {
         const response = await ynabAPI.transactions.getTransactionsByCategory(
           params.budgetId,
           params.categoryId,
-          options
+          sinceDate,
+          params.type
         );
+        
+        // Apply limit if needed
+        if (limit && response.data.transactions.length > limit) {
+          response.data.transactions = response.data.transactions.slice(0, limit);
+        }
         
         return formatTransactionsResponse(response.data);
       }
@@ -77,8 +92,14 @@ async function listTransactions(params) {
         const response = await ynabAPI.transactions.getTransactionsByPayee(
           params.budgetId,
           params.payeeId,
-          options
+          sinceDate,
+          params.type
         );
+        
+        // Apply limit if needed
+        if (limit && response.data.transactions.length > limit) {
+          response.data.transactions = response.data.transactions.slice(0, limit);
+        }
         
         return formatTransactionsResponse(response.data);
       }
@@ -87,19 +108,40 @@ async function listTransactions(params) {
       else {
         const response = await ynabAPI.transactions.getTransactions(
           params.budgetId, 
-          options
+          sinceDate,
+          params.type
         );
+        
+        // Apply limit if needed
+        if (limit && response.data.transactions.length > limit) {
+          response.data.transactions = response.data.transactions.slice(0, limit);
+        }
         
         return formatTransactionsResponse(response.data);
       }
     } catch (error) {
-      // Check for 404 error
-      if (error.error && error.error.id === '404') {
-        throw new NotFoundError(`Resource not found for the specified filter`);
+      logger.error(`Error listing transactions: ${error.message}`, error);
+      
+      // Check for specific error types
+      if (error.error) {
+        if (error.error.id === '404') {
+          throw new NotFoundError(`Resource not found for the specified filter`);
+        }
+        
+        if (error.error.id === '400') {
+          // Detailed information for bad request errors
+          const detailMessage = error.error.detail || error.message;
+          throw new ValidationError(`Invalid request: ${detailMessage}`);
+        }
       }
       
-      // Re-throw other errors
-      throw error;
+      // If this is already one of our custom errors, re-throw it
+      if (error instanceof ValidationError || error instanceof NotFoundError) {
+        throw error;
+      }
+      
+      // Otherwise, wrap in a more informative error message
+      throw new Error(`Failed to retrieve transactions: ${error.message}`);
     }
   });
 }

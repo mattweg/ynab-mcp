@@ -260,6 +260,93 @@ const categoryTools = [
       },
       required: ['email', 'budgetId', 'categoryId']
     }
+  },
+  {
+    name: 'assign_to_categories',
+    category: CATEGORIES.CATEGORIES,
+    description: `Assign budget from Ready to Assign to multiple categories.
+    
+    This tool intelligently allocates funds from your Ready to Assign balance to specific categories.
+    It performs validation to ensure you don't exceed available funds, and provides detailed results
+    of each allocation with before/after values.
+    
+    Common usage:
+    - Distribute newly received income to multiple categories
+    - Fill underfunded categories quickly
+    - Apply a budget template to multiple categories at once`,
+    inputSchema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: 'Email address of the authenticated YNAB account'
+        },
+        budgetId: {
+          type: 'string',
+          description: 'ID of the budget to work with'
+        },
+        month: {
+          type: 'string',
+          description: 'Month in ISO format (YYYY-MM)'
+        },
+        categoryAllocations: {
+          type: 'array',
+          description: 'Array of category allocations to apply',
+          items: {
+            type: 'object',
+            properties: {
+              categoryId: {
+                type: 'string',
+                description: 'ID of the category to allocate funds to'
+              },
+              amount: {
+                type: 'number',
+                description: 'Amount to allocate (in dollars or milliunits)'
+              }
+            },
+            required: ['categoryId', 'amount']
+          }
+        }
+      },
+      required: ['email', 'budgetId', 'month', 'categoryAllocations']
+    }
+  },
+  {
+    name: 'get_recommended_allocations',
+    category: CATEGORIES.CATEGORIES,
+    description: `Get AI-powered recommendations for category allocations.
+    
+    This tool analyzes your budget patterns and provides intelligent recommendations
+    for how to allocate your Ready to Assign funds. Recommendations are prioritized based on:
+    
+    1. Underfunded goals (highest priority)
+    2. Essential categories with negative balances
+    3. Regular spending categories with insufficient funds
+    4. Savings goals (lowest priority)
+    
+    Each recommendation includes the amount, reason, and priority level.`,
+    inputSchema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: 'Email address of the authenticated YNAB account'
+        },
+        budgetId: {
+          type: 'string',
+          description: 'ID of the budget to analyze'
+        },
+        month: {
+          type: 'string',
+          description: 'Month in ISO format (YYYY-MM)'
+        },
+        availableAmount: {
+          type: 'number',
+          description: 'Optional override for available amount to allocate (in milliunits)'
+        }
+      },
+      required: ['email', 'budgetId', 'month']
+    }
   }
 ];
 

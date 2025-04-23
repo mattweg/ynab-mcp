@@ -10,8 +10,21 @@ const path = require('path');
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Test MCP requests
-async function testMcp() {
+async function testMcp(toolName, toolArgs) {
   console.log('Starting YNAB MCP test...');
+  
+  // Process arguments
+  const toolToCall = toolName || 'list_ynab_accounts';
+  let parsedArgs = {};
+  
+  if (toolArgs) {
+    try {
+      parsedArgs = JSON.parse(toolArgs);
+    } catch (e) {
+      console.error('Error parsing tool arguments JSON:', e.message);
+      process.exit(1);
+    }
+  }
   
   // Launch the MCP server
   const serverProcess = spawn('node', [path.join(__dirname, 'src', 'server.js')], {
@@ -96,21 +109,23 @@ async function testMcp() {
     // Wait for response
     await wait(1000);
     
-    // Test 3: Call list_ynab_accounts tool
-    console.log('\n[TEST 3] Sending tools/call request for list_ynab_accounts...');
+    // Test 3: Call the specified tool with arguments
+    console.log(`\n[TEST 3] Sending tools/call request for ${toolToCall}...`);
+    console.log(`Arguments: ${JSON.stringify(parsedArgs)}`);
+    
     const callToolRequest = {
       jsonrpc: "2.0",
       id: 3,
       method: "tools/call",
       params: {
-        name: "list_ynab_accounts",
-        arguments: {}
+        name: toolToCall,
+        arguments: parsedArgs
       }
     };
     serverStdin.write(JSON.stringify(callToolRequest) + '\n');
     
     // Wait for response
-    await wait(2000);
+    await wait(3000);
     
     console.log('\nTests completed, shutting down server...');
     serverProcess.kill();
@@ -120,5 +135,9 @@ async function testMcp() {
   }
 }
 
+// Check for command line arguments
+const toolName = process.argv[2];
+const toolArgs = process.argv[3];
+
 // Run the tests
-testMcp().catch(console.error);
+testMcp(toolName, toolArgs).catch(console.error);
