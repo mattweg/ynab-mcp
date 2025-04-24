@@ -62,6 +62,46 @@ class YnabServer {
     
     // Set up handlers
     this.setupHandlers();
+    this.setupSignalHandlers();
+  }
+  
+  /**
+   * Set up signal handlers for graceful shutdown
+   */
+  setupSignalHandlers() {
+    // Handle graceful shutdown on SIGINT (Ctrl+C) and SIGTERM (Docker stop)
+    process.on('SIGINT', this.shutdown.bind(this));
+    process.on('SIGTERM', this.shutdown.bind(this));
+    
+    // Handle Docker-specific signals and Node.js IPC messages
+    process.on('message', (msg) => {
+      if (msg === 'shutdown') {
+        this.shutdown();
+      }
+    });
+    
+    logger.info('Signal handlers registered for graceful shutdown');
+  }
+
+  /**
+   * Gracefully shutdown the server
+   */
+  async shutdown() {
+    logger.info('Received shutdown signal, closing YNAB MCP server...');
+    
+    try {
+      // Add any cleanup code here if needed
+      // For example, closing database connections, etc.
+      
+      // Give a short time for cleanup and logging to complete
+      setTimeout(() => {
+        logger.info('YNAB MCP server shutdown complete');
+        process.exit(0); // Exit with success code so Docker will remove the container
+      }, 500);
+    } catch (error) {
+      logger.error('Error during server shutdown:', error);
+      process.exit(1); // Exit with error code
+    }
   }
   
   setupHandlers() {
