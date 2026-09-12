@@ -42,8 +42,8 @@ emma mcp add-json ynab '{
     "-i",
     "-v", "/home/claude-user/.mcp/ynab-mcp:/app/config",
     "-v", "/home/claude-user/.mcp/ynab-mcp/data:/app/data",
-    "-e", "YNAB_CLIENT_ID=524cfd7c70904f208b9daed6ea8fcc56be3464fec12ec07c22350caa7b45c30b",
-    "-e", "YNAB_CLIENT_SECRET=c89ec70b63a16c8aeddbe1e582029b4ccb04cbc5a30da40da6d1acca19c9be1a",
+    "-e", "YNAB_CLIENT_ID=YOUR_YNAB_CLIENT_ID",
+    "-e", "YNAB_CLIENT_SECRET=YOUR_YNAB_CLIENT_SECRET",
     "-e", "YNAB_REDIRECT_URI=urn:ietf:wg:oauth:2.0:oob",
     "-e", "LOG_LEVEL=info",
     "ynab-mcp:latest"

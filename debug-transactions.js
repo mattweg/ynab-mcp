@@ -12,9 +12,9 @@ async function debugTransactions() {
     const tokens = JSON.parse(tokensFile);
     
     // Get Matt's token
-    const userToken = tokens['mattweg@gmail.com'];
+    const userToken = tokens['your-email@example.com'];
     if (!userToken) {
-      console.error('No token found for mattweg@gmail.com');
+      console.error('No token found for your-email@example.com');
       return;
     }
     
@@ -23,7 +23,7 @@ async function debugTransactions() {
     const ynabAPI = new API(accessToken);
     
     // Set budget ID
-    const budgetId = 'fd559269-1415-456f-afda-f1e5b5c35508';
+    const budgetId = 'YOUR_BUDGET_ID';
     
     console.log('Testing transactions API with different date formats...');
     
