@@ -74,8 +74,8 @@ nano ~/.claude.json  # or appropriate path for your environment
         "-i",
         "-v", "/home/claude-user/.mcp/ynab-mcp:/app/config",
         "-v", "/home/claude-user/.mcp/ynab-mcp/data:/app/data",
-        "-e", "YNAB_CLIENT_ID=qZBgoP92_BeEyHj0hsekr66-4zgcnz8Rww1w86QIEOY",
-        "-e", "YNAB_CLIENT_SECRET=xAVgg4QeYBk3SXwFePEMqyi3TpFiLTvcMuDq00mLfPA",
+        "-e", "YNAB_CLIENT_ID=YOUR_YNAB_CLIENT_ID",
+        "-e", "YNAB_CLIENT_SECRET=YOUR_YNAB_CLIENT_SECRET",
         "-e", "YNAB_REDIRECT_URI=urn:ietf:wg:oauth:2.0:oob",
         "-e", "LOG_LEVEL=info",
         "ynab-mcp-server:latest"

@@ -35,3 +35,8 @@ Thumbs.db
 # Build directory
 dist/
 build/
+
+# Local copies of example configs (never commit real credentials)
+config-example.local.js
+config.local.js
+*.secrets.js
